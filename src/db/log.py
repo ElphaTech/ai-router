@@ -12,6 +12,7 @@ async def log_to_db(
     priority_tier: int,
     prompt: Any,
     response: str,
+    duration: int,
     status: str,
 ):
     """Executes database logging asynchronously."""
@@ -21,8 +22,8 @@ async def log_to_db(
         conn.execute(
             """
             INSERT INTO model_logs 
-            (requested_model, selected_provider, actual_model, priority_tier, prompt, response, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (requested_model, selected_provider, actual_model, priority_tier, prompt, response, duration, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 requested_model,
@@ -31,6 +32,7 @@ async def log_to_db(
                 priority_tier,
                 dumps(prompt),
                 response,
+                duration,
                 status,
             ),
         )

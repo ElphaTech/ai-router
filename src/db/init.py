@@ -17,6 +17,7 @@ def init_db():
             priority_tier INTEGER,
             prompt TEXT,
             response TEXT,
+            duration INTEGER,
             status TEXT,
             eval_score REAL DEFAULT NULL
         );

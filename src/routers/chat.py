@@ -67,6 +67,7 @@ async def chat_completions(request: Request):
             }
 
             try:
+                start_time = time.time()
                 resp = await client.post(
                     f"{candidate['base_url'].rstrip('/')}/chat/completions",
                     json=prepared_payload,
@@ -95,6 +96,8 @@ async def chat_completions(request: Request):
                         priority_tier=candidate["priority"],
                         prompt=messages,
                         response=content,
+                        duration=int((time.time()-start_time)
+                                     * 1000),  # get ms to reply
                         status="success",
                     )
 
