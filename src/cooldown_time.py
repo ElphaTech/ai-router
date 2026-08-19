@@ -15,11 +15,13 @@ def parse_cooldown_time(
     """Extracts rate limit reset times from HTTP response headers."""
     now = time()
     headers = response.headers
+    print(f"Got cooldown warning: {repr(headers)}")
 
     # Check Retry-After header (seconds or timestamp)
     retry_after = headers.get("retry-after")
     if retry_after:
         try:
+            print(f'- retry-after: {now + float(retry_after)}')
             return now + float(retry_after)
         except ValueError:
             pass
@@ -31,6 +33,7 @@ def parse_cooldown_time(
         try:
             val = float(reset_val)
             # If timestamp is in far future, it's absolute epoch time
+            print(f'- x-...: {val if val > 1_000_000_000 else now + val}')
             return val if val > 1_000_000_000 else now + val
         except ValueError:
             pass
@@ -38,6 +41,8 @@ def parse_cooldown_time(
     # Fall back to 24-hour lock if body indicates daily limit exhaustion
     body_text = response.text.lower()
     if "daily" in body_text or "per day" in body_text or "quota" in body_text:
+        print('- fallback to daily')
         return now + 86400
 
+    print('- fallback to default seconds')
     return now + default_seconds
